@@ -5,6 +5,7 @@ const handleListEmails = require('./list');
 const handleSearchEmails = require('./search');
 const handleReadEmail = require('./read');
 const handleSendEmail = require('./send');
+const handleMarkAsRead = require('./mark-as-read');
 
 // Email tool definitions
 const emailTools = [
@@ -124,6 +125,25 @@ const emailTools = [
       required: ["to", "subject", "body"]
     },
     handler: handleSendEmail
+  },
+  {
+    name: "mark-as-read",
+    description: "Marks an email as read or unread",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: {
+          type: "string",
+          description: "ID of the email to mark as read/unread"
+        },
+        isRead: {
+          type: "boolean",
+          description: "Whether to mark as read (true) or unread (false). Default: true"
+        }
+      },
+      required: ["id"]
+    },
+    handler: handleMarkAsRead
   }
 ];
 
@@ -132,5 +152,6 @@ module.exports = {
   handleListEmails,
   handleSearchEmails,
   handleReadEmail,
-  handleSendEmail
+  handleSendEmail,
+  handleMarkAsRead
 };
