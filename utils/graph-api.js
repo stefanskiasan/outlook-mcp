@@ -84,13 +84,9 @@ async function callGraphAPI(accessToken, method, path, data = null, queryParams 
         res.on('end', () => {
           if (res.statusCode >= 200 && res.statusCode < 300) {
             try {
-              // Handle empty responses (like sendMail which returns 202 with empty body)
-              if (!responseData || responseData.trim() === '') {
-                resolve({ success: true, message: 'Request completed successfully' });
-              } else {
-                const jsonResponse = JSON.parse(responseData);
-                resolve(jsonResponse);
-              }
+              responseData = responseData ? responseData : '{}';
+              const jsonResponse = JSON.parse(responseData);
+              resolve(jsonResponse);
             } catch (error) {
               reject(new Error(`Error parsing API response: ${error.message}`));
             }
