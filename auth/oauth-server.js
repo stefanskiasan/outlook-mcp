@@ -116,11 +116,25 @@ function setupOAuthRoutes(app, tokenStorage, authConfig, envPrefix = 'MS_') {
 
     // Since this module itself doesn't manage sessions, we'll log a warning if state is missing,
     // but actual enforcement must be done by the consuming application.
+    // The Gemini review recommended uncommenting the rejection.
+    // However, the consuming app (CLI or server) is responsible for session/state storage.
+    // This module *cannot* validate state if it wasn't involved in storing it.
+    // The PR author (ranxian) needs to implement state storage & validation in the calling server (sse-server.js or outlook-auth-server.js).
+    // For now, enforcing a missing state here would break flows where state *is* passed but not validated by *this specific module*.
+    // The best this module can do is check for presence and rely on the consumer to validate the actual value.
+    // The original PR #10's outlook-auth-server.js used Date.now() and didn't store/validate it beyond this.
+    // The new sse-server.js also doesn't show session management for state.
+    // So, we will make the check for presence mandatory as per Gemini's suggestion.
     if (!state) {
-        console.warn("OAuth callback received without a 'state' parameter. CSRF validation cannot be performed by this module alone.");
-        // Depending on security policy, you might choose to reject such requests here.
-        // return res.status(400).send(templates.authError('Missing State', 'State parameter missing from OAuth callback.'));
+        console.error("OAuth callback received without a 'state' parameter. Rejecting request to prevent potential CSRF attack.");
+        return res.status(400).send(templates.authError('Missing State Parameter', 'The state parameter was missing from the OAuth callback. This is a security risk. Please try authenticating again.'));
     }
+    // Further validation of the state's VALUE (e.g., req.session.oauthState === state) is the responsibility
+    // of the application integrating this module, as session management is outside this module's scope.
+    // if (req.session && req.session.oauthState !== state) {
+    //    return res.status(400).send(templates.authError('Invalid State Parameter', 'CSRF detected. State mismatch.'));
+    // }
+    // if (req.session) delete req.session.oauthState;
 
 
     if (error) {

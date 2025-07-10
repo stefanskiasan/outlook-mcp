@@ -104,15 +104,28 @@ describe('OAuth Server Routes', () => {
 
     // Test for state missing - module currently warns but doesn't block.
     // This test verifies the warning behavior.
-    it('should log a warning if state is missing (but still proceed as per current module logic)', async () => {
-        const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
-        mockTokenStorageInstance.exchangeCodeForTokens.mockResolvedValue({ access_token: 'mock_access_token' });
+    // it('should log a warning if state is missing (but still proceed as per current module logic)', async () => {
+    //     const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
+    //     mockTokenStorageInstance.exchangeCodeForTokens.mockResolvedValue({ access_token: 'mock_access_token' });
 
-        await request(app).get(`/auth/callback?code=${mockAuthCode}`); // No state passed
+    //     await request(app).get(`/auth/callback?code=${mockAuthCode}`); // No state passed
 
-        expect(consoleWarnSpy).toHaveBeenCalledWith("OAuth callback received without a 'state' parameter. CSRF validation cannot be performed by this module alone.");
-        expect(mockTokenStorageInstance.exchangeCodeForTokens).toHaveBeenCalledWith(mockAuthCode); // Still called
-        consoleWarnSpy.mockRestore();
+    //     expect(consoleWarnSpy).toHaveBeenCalledWith("OAuth callback received without a 'state' parameter. CSRF validation cannot be performed by this module alone.");
+    //     expect(mockTokenStorageInstance.exchangeCodeForTokens).toHaveBeenCalledWith(mockAuthCode); // Still called
+    //     consoleWarnSpy.mockRestore();
+    // });
+
+    it('should return 400 if state is missing from callback', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      const response = await request(app).get(`/auth/callback?code=${mockAuthCode}`); // No state
+
+      expect(response.status).toBe(400);
+      expect(response.text).toContain('Authorization Failed');
+      expect(response.text).toContain('Error:</strong> Missing State Parameter');
+      expect(response.text).toContain('The state parameter was missing from the OAuth callback.');
+      expect(mockTokenStorageInstance.exchangeCodeForTokens).not.toHaveBeenCalled();
+      expect(consoleErrorSpy).toHaveBeenCalledWith("OAuth callback received without a 'state' parameter. Rejecting request to prevent potential CSRF attack.");
+      consoleErrorSpy.mockRestore();
     });
 
 

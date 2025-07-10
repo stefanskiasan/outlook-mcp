@@ -92,10 +92,19 @@ describe('TokenStorage', () => {
     it('should log warning if no tokens to save', async () => {
       const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
       tokenStorage.tokens = null;
-      await tokenStorage._saveTokensToFile();
+      // Since it now returns false (or throws if we change it more), we expect it to return false
+      const result = await tokenStorage._saveTokensToFile();
+      expect(result).toBe(false); // As per current _saveTokensToFile when tokens are null
       expect(fs.writeFile).not.toHaveBeenCalled();
       expect(consoleWarnSpy).toHaveBeenCalledWith('No tokens to save.');
       consoleWarnSpy.mockRestore();
+    });
+
+    it('should throw error if fs.writeFile fails', async () => {
+      tokenStorage.tokens = { access_token: 'test_token' };
+      const writeError = new Error('Disk full');
+      fs.writeFile.mockRejectedValue(writeError);
+      await expect(tokenStorage._saveTokensToFile()).rejects.toThrow(writeError);
     });
   });
 
@@ -230,6 +239,26 @@ describe('TokenStorage', () => {
       expect(saveSpy).toHaveBeenCalled();
     });
 
+    it('should reject if saving exchanged token fails', async () => {
+      const saveError = new Error('Disk space full');
+      // Mock _saveTokensToFile to throw this error
+      jest.spyOn(tokenStorage, '_saveTokensToFile').mockRejectedValueOnce(saveError);
+
+      const exchangePromise = tokenStorage.exchangeCodeForTokens(mockAuthCode);
+      const mockRes = { // Simulate successful API response
+          statusCode: 200,
+          on: (event, cb) => {
+              if (event === 'data') cb(Buffer.from(JSON.stringify(mockSuccessfulTokenResponse)));
+              if (event === 'end') cb();
+          }
+      };
+      mockHttpsRequest.callback(mockRes);
+
+      await expect(exchangePromise).rejects.toThrow(`Tokens exchanged but failed to save: ${saveError.message}`);
+      // Check that tokens were updated in memory before save attempt
+      expect(tokenStorage.tokens.access_token).toBe(mockSuccessfulTokenResponse.access_token);
+    });
+
     it('should reject on token exchange API error', async () => {
         const errorResponse = { error: 'invalid_grant', error_description: 'Bad auth code' };
         const exchangePromise = tokenStorage.exchangeCodeForTokens(mockAuthCode);
@@ -313,6 +342,26 @@ describe('TokenStorage', () => {
         const requestBody = querystring.parse(mockHttpsRequest.write.mock.calls[0][0]);
         expect(requestBody.grant_type).toBe('refresh_token');
         expect(requestBody.refresh_token).toBe('valid_refresh_token');
+    });
+
+    it('should reject if saving refreshed token fails', async () => {
+        const saveError = new Error('Failed to save disk');
+        // Mock _saveTokensToFile to throw an error *after* a successful API response
+        jest.spyOn(tokenStorage, '_saveTokensToFile').mockRejectedValueOnce(saveError);
+
+        const refreshPromise = tokenStorage.refreshAccessToken();
+        const mockRes = { // Simulate successful API response
+            statusCode: 200,
+            on: (event, cb) => {
+                if (event === 'data') cb(Buffer.from(JSON.stringify(mockSuccessfulRefreshResponse)));
+                if (event === 'end') cb();
+            }
+        };
+        mockHttpsRequest.callback(mockRes);
+
+        await expect(refreshPromise).rejects.toThrow(`Access token refreshed but failed to save: ${saveError.message}`);
+        // Ensure tokens in memory are updated despite save failure, as per current logic before rejection
+        expect(tokenStorage.tokens.access_token).toBe(mockSuccessfulRefreshResponse.access_token);
     });
 
     it('should use existing refresh_token if new one is not in response', async () => {
@@ -431,13 +480,23 @@ describe('TokenStorage', () => {
         expect(saveSpy).toHaveBeenCalled(); // Invalidation should be persisted
     });
 
+    it('should propagate error if saving nulled token fails after refresh failure', async () => {
+        tokenStorage.tokens = { access_token: 'expired_token_save_fail', refresh_token: 'refresh_me', expires_at: Date.now() - 1000 };
+        jest.spyOn(tokenStorage, 'refreshAccessToken').mockRejectedValue(new Error('Refresh API down'));
+        const saveError = new Error('Disk write error during null save');
+        jest.spyOn(tokenStorage, '_saveTokensToFile').mockRejectedValueOnce(saveError); // This is key
+
+        await expect(tokenStorage.getValidAccessToken()).rejects.toThrow(saveError);
+        expect(tokenStorage.tokens).toBeNull(); // Still nulled in memory
+    });
+
     it('should return null and clear tokens if expired and no refresh token', async () => {
         tokenStorage.tokens = {
             access_token: 'expired_no_refresh',
             expires_at: Date.now() - 1000
             // No refresh_token
         };
-        const saveSpy = jest.spyOn(tokenStorage, '_saveTokensToFile');
+        const saveSpy = jest.spyOn(tokenStorage, '_saveTokensToFile').mockResolvedValue(true); // Assume save works for this path
         const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
 
         const token = await tokenStorage.getValidAccessToken();
@@ -446,6 +505,15 @@ describe('TokenStorage', () => {
         expect(tokenStorage.tokens).toBeNull();
         expect(saveSpy).toHaveBeenCalled();
         consoleWarnSpy.mockRestore();
+    });
+
+    it('should propagate error if saving nulled token fails (no refresh token path)', async () => {
+        tokenStorage.tokens = { access_token: 'expired_no_refresh_save_fail', expires_at: Date.now() - 1000 };
+        const saveError = new Error('Disk write error during null save (no-refresh path)');
+        jest.spyOn(tokenStorage, '_saveTokensToFile').mockRejectedValueOnce(saveError);
+
+        await expect(tokenStorage.getValidAccessToken()).rejects.toThrow(saveError);
+        expect(tokenStorage.tokens).toBeNull(); // Still nulled in memory
     });
 
     it('should return null if no tokens are loaded initially', async () => {

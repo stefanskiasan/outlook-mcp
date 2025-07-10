@@ -49,10 +49,10 @@ class TokenStorage {
     try {
       await fs.writeFile(this.config.tokenStorePath, JSON.stringify(this.tokens, null, 2));
       console.log('Tokens saved successfully.');
-      return true;
+      // return true; // No longer returning boolean, will throw on error.
     } catch (error) {
       console.error('Error saving token cache:', error);
-      return false;
+      throw error; // Propagate the error
     }
   }
 
@@ -152,16 +152,25 @@ class TokenStorage {
                         }
                         this.tokens.expires_in = responseBody.expires_in;
                         this.tokens.expires_at = Date.now() + (responseBody.expires_in * 1000);
-                        await this._saveTokensToFile();
-                        console.log('Access token refreshed successfully.');
-                        resolve(this.tokens);
+                        try {
+                            await this._saveTokensToFile();
+                            console.log('Access token refreshed and saved successfully.');
+                            resolve(this.tokens);
+                        } catch (saveError) {
+                            console.error('Failed to save refreshed tokens:', saveError);
+                            // Even if save fails, tokens are updated in memory.
+                            // Depending on desired strictness, could reject here.
+                            // For now, resolve with in-memory tokens but log critical error.
+                            // Or, to be stricter and align with re-throwing:
+                            reject(new Error(`Access token refreshed but failed to save: ${saveError.message}`));
+                        }
                     } else {
                         console.error('Error refreshing token:', responseBody);
                         reject(new Error(responseBody.error_description || `Token refresh failed with status ${res.statusCode}`));
                     }
-                } catch (parseError) {
-                    console.error('Error parsing refresh token response:', parseError);
-                    reject(parseError);
+                } catch (e) { // Catch any error during parsing or saving
+                    console.error('Error processing refresh token response or saving tokens:', e);
+                    reject(e);
                 } finally {
                     this._refreshPromise = null; // Clear promise after completion
                 }
@@ -218,16 +227,23 @@ class TokenStorage {
                 scope: responseBody.scope,
                 token_type: responseBody.token_type
               };
-              await this._saveTokensToFile();
-              console.log('Tokens exchanged and saved successfully.');
-              resolve(this.tokens);
+              try {
+                await this._saveTokensToFile();
+                console.log('Tokens exchanged and saved successfully.');
+                resolve(this.tokens);
+              } catch (saveError) {
+                console.error('Failed to save exchanged tokens:', saveError);
+                // Similar to refresh, tokens are in memory but not persisted.
+                // Rejecting to indicate the operation wasn't fully successful.
+                reject(new Error(`Tokens exchanged but failed to save: ${saveError.message}`));
+              }
             } else {
               console.error('Error exchanging code for tokens:', responseBody);
               reject(new Error(responseBody.error_description || `Token exchange failed with status ${res.statusCode}`));
             }
-          } catch (parseError) {
-            console.error('Error parsing token exchange response:', parseError, "Raw data:", data);
-            reject(new Error(`Error parsing token response: ${parseError.message}. Response data: ${data}`));
+          } catch (e) { // Catch any error during parsing or saving
+            console.error('Error processing token exchange response or saving tokens:', e, "Raw data:", data);
+            reject(new Error(`Error processing token response: ${e.message}. Response data: ${data}`));
           }
         });
       });
