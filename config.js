@@ -40,5 +40,8 @@ module.exports = {
   
   // Pagination
   DEFAULT_PAGE_SIZE: 25,
-  MAX_RESULT_COUNT: 50
+  MAX_RESULT_COUNT: 50,
+
+  // Timezone
+  DEFAULT_TIMEZONE: "Central European Standard Time",
 };
