@@ -23,8 +23,8 @@ async function handleListInboxEmails(args) {
       return await createAuthRequiredResponse('list-inbox-emails');
     }
     
-    // Always use inbox endpoint - never other folders
-    const endpoint = 'me/messages';
+    // Always use inbox endpoint - never other folders  
+    const endpoint = 'me/mailFolders/inbox/messages';
     
     // Build query parameters
     const queryParams = {
@@ -117,8 +117,8 @@ async function handleSearchInboxEmails(args) {
       return await createAuthRequiredResponse('search-inbox-emails');
     }
     
-    // Always use inbox endpoint - never other folders
-    const endpoint = 'me/messages';
+    // Always use inbox endpoint - never other folders  
+    const endpoint = 'me/mailFolders/inbox/messages';
     
     // Build search filters
     const filters = [];
