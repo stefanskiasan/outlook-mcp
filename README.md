@@ -1,136 +1,272 @@
-[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/ryaker-outlook-mcp-badge.png)](https://mseep.ai/app/ryaker-outlook-mcp)
+# Comprehensive Outlook & Teams MCP Server
 
-# Modular Outlook MCP Server
+[![npm version](https://badge.fury.io/js/outlook-mcp.svg)](https://badge.fury.io/js/outlook-mcp)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-brightgreen)](https://github.com/modelcontextprotocol/specification)
 
-This is a modular implementation of the Outlook MCP (Model Context Protocol) server that connects Claude with Microsoft Outlook through the Microsoft Graph API.
-Certified by MCPHub https://mcphub.com/mcp-servers/ryaker/outlook-mcp
+**Developed by Asan Stefanski**
 
-## Directory Structure
+A comprehensive Model Context Protocol (MCP) server that provides Claude with full access to Microsoft Outlook and Microsoft Teams through the Microsoft Graph API. This server offers 72+ tools across 8 modules, making it one of the most complete Microsoft 365 integrations available for Claude.
 
-```
-/modular/
-├── index.js                 # Main entry point
-├── config.js                # Configuration settings
-├── auth/                    # Authentication modules
-│   ├── index.js             # Authentication exports
-│   ├── token-manager.js     # Token storage and refresh
-│   └── tools.js             # Auth-related tools
-├── calendar/                # Calendar functionality
-│   ├── index.js             # Calendar exports
-│   ├── list.js              # List events
-│   ├── create.js            # Create event
-│   ├── delete.js            # Delete event
-│   ├── cancel.js            # Cancel
-│   ├── accept.js            # Accept event
-│   ├── tentative.js         # Tentatively accept event
-│   ├── decline.js           # Decline event
-├── email/                   # Email functionality
-│   ├── index.js             # Email exports
-│   ├── list.js              # List emails
-│   ├── search.js            # Search emails
-│   ├── read.js              # Read email
-│   └── send.js              # Send email
-└── utils/                   # Utility functions
-    ├── graph-api.js         # Microsoft Graph API helper
-    ├── odata-helpers.js     # OData query building
-    └── mock-data.js         # Test mode data
-```
+## 🚀 Features
 
-## Features
+- **📧 Email Management** (17 tools): Full email operations including send, reply, forward, attachments, categories, and drafts
+- **📅 Calendar Management** (12 tools): Complete calendar and event management with CRUD operations
+- **👥 Contacts Management** (8 tools): Full contact lifecycle management with folders
+- **✅ Tasks Integration** (7 tools): Microsoft To-Do integration for task and list management
+- **🔗 Teams Integration** (25 tools): Complete Teams functionality including:
+  - Teams and channels management
+  - Messages and chats
+  - Online meetings
+  - Presence status
+- **📁 Folder Management** (3 tools): Mail folder operations
+- **⚙️ Rules Management** (3 tools): Email rules automation
+- **🔐 Authentication** (2 tools): OAuth 2.0 with Microsoft Graph API
 
-- **Authentication**: OAuth 2.0 authentication with Microsoft Graph API
-- **Email Management**: List, search, read, and send emails
-- **Modular Structure**: Clean separation of concerns for better maintainability
-- **OData Filter Handling**: Proper escaping and formatting of OData queries
-- **Test Mode**: Simulated responses for testing without real API calls
+## 📦 Installation
 
-## Azure App Registration & Configuration
-
-To use this MCP server you need to first register and configure an app in Azure Portal. The following steps will take you through the process of registering a new app, configuring its permissions, and generating a client secret.
-
-### App Registration
-
-1. Open [Azure Portal](https://portal.azure.com/) in your browser
-2. Sign in with a Microsoft Work or Personal account
-3. Search for or cilck on "App registrations"
-4. Click on "New registration"
-5. Enter a name for the app, for example "Outlook MCP Server"
-6. Select the "Accounts in any organizational directory and personal Microsoft accounts" option
-7. In the "Redirect URI" section, select "Web" from the dropdown and enter "http://localhost:3333/auth/callback" in the textbox
-8. Click on "Register"
-9. From the Overview section of the app settings page, copy the "Application (client) ID" and enter it as the MS_CLIENT_ID in the .env file as well as the OUTLOOK_CLIENT_ID in the claude-config-sample.json file
-
-### App Permissions
-
-1. From the app settings page in Azure Portal select the "API permissions" option under the Manage section
-2. Click on "Add a permission"
-3. Click on "Microsoft Graph"
-4. Select "Delegated permissions"
-5. Search for the following permissions and slect the checkbox next to each one
-    - offline_access
-    - User.Read
-    - Mail.Read
-    - Mail.Send
-    - Calendars.Read
-    - Calendars.ReadWrite
-    - Contacts.Read
-6. Click on "Add permissions"
-
-### Client Secret
-
-1. From the app settings page in Azure Portal select the "Certificates & secrets" option under the Manage section
-2. Switch to the "Client secrets" tab
-3. Click on "New client secret"
-4. Enter a description, for example "Client Secret"
-5. Select the longest possible expiration time
-6. Click on "Add"
-7. Copy the secret value and enter it as the MS_CLIENT_SECRET in the .env file as well as the OUTLOOK_CLIENT_SECRET in the claude-config-sample.json file
-
-## Configuration
-
-To configure the server, edit the `config.js` file to change:
-
-- Server name and version
-- Test mode settings
-- Authentication parameters
-- Email field selections
-- API endpoints
-
-## Usage with Claude Desktop
-
-1. Copy the sample configuration from `claude-config-sample.json` to your Claude Desktop configuration
-2. Restart Claude Desktop
-3. Authenticate with Microsoft using the `authenticate` tool
-4. Use the email tools to manage your Outlook account
-
-## Running Standalone
-
-You can test the server using:
+### Via npm (Recommended)
 
 ```bash
-./test-modular-server.sh
+npm install -g outlook-mcp
 ```
 
-This will use the MCP Inspector to directly connect to the server and let you test the available tools.
+### Via git clone
 
-## Authentication Flow
+```bash
+git clone https://github.com/stefanskiasan/outlook-mcp.git
+cd outlook-mcp
+npm install
+```
 
-1. Start a local authentication server on port 3333 (using `outlook-auth-server.js`)
-2. Use the `authenticate` tool to get an authentication URL
-3. Complete the authentication in your browser
-4. Tokens are stored in `~/.outlook-mcp-tokens.json`
+## 🔧 Setup
 
-## Troubleshooting
+### 1. Azure App Registration
 
-- **Authentication Issues**: Check the token file and authentication server logs
-- **OData Filter Errors**: Look for escape sequences in the server logs
-- **API Call Failures**: Check for detailed error messages in the response
+You need to register an application in Azure Portal:
 
-## Extending the Server
+1. Go to [Azure Portal](https://portal.azure.com/) → App registrations → New registration
+2. Name: "Outlook MCP Server"
+3. Supported account types: "Accounts in any organizational directory and personal Microsoft accounts"
+4. Redirect URI: `http://localhost:3333/auth/callback`
+5. Click "Register"
 
-To add more functionality:
+### 2. Configure API Permissions
 
-1. Create new module directories (e.g., `calendar/`)
-2. Implement tool handlers in separate files
-3. Export tool definitions from module index files
-4. Import and add tools to `TOOLS` array in `index.js`
+In your Azure app, go to "API permissions" → "Add a permission" → "Microsoft Graph" → "Delegated permissions" and add:
+
+**Core Permissions:**
+- `offline_access`
+- `User.Read`
+
+**Email & Calendar:**
+- `Mail.Read`
+- `Mail.ReadWrite`
+- `Mail.Send`
+- `Calendars.Read`
+- `Calendars.ReadWrite`
+
+**Contacts & Tasks:**
+- `Contacts.Read`
+- `Contacts.ReadWrite`
+- `Tasks.Read`
+- `Tasks.ReadWrite`
+
+**Teams & Communication:**
+- `Team.ReadBasic.All`
+- `TeamMember.Read.All`
+- `Channel.ReadBasic.All`
+- `ChannelMessage.Read.All`
+- `ChannelMessage.Send`
+- `Chat.Read`
+- `Chat.ReadWrite`
+- `ChatMessage.Read`
+- `ChatMessage.Send`
+- `Presence.Read`
+- `Presence.Read.All`
+- `OnlineMeetings.ReadWrite`
+
+### 3. Create Client Secret
+
+1. Go to "Certificates & secrets" → "New client secret"
+2. Add description and select expiration
+3. Copy the secret value immediately
+
+### 4. Environment Configuration
+
+Create a `.env` file in the project root:
+
+```env
+MS_CLIENT_ID=your-client-id-here
+MS_CLIENT_SECRET=your-client-secret-here
+USE_TEST_MODE=false
+```
+
+### 5. Claude Desktop Configuration
+
+Add to your Claude Desktop config file:
+
+```json
+{
+  "mcpServers": {
+    "outlook-mcp": {
+      "command": "npx",
+      "args": ["outlook-mcp"],
+      "env": {
+        "MS_CLIENT_ID": "your-client-id-here",
+        "MS_CLIENT_SECRET": "your-client-secret-here"
+      }
+    }
+  }
+}
+```
+
+**Note:** The `npx outlook-mcp` command is designed to run as an MCP server via stdio and is meant to be used by Claude Desktop, not run directly from the command line.
+
+## 🎯 Usage
+
+### 1. Authentication
+
+First, authenticate with Microsoft:
+
+```
+Use the "authenticate" tool in Claude to get an authentication URL
+```
+
+### 2. Available Tools
+
+The server provides 72+ tools across these categories:
+
+#### Email Tools (17)
+- `list-emails`, `search-emails`, `read-email`, `send-email`
+- `reply-email`, `forward-email`, `delete-email`
+- `list-attachments`, `download-attachment`
+- `list-categories`, `create-category`, `delete-category`
+- `list-drafts`, `create-draft`, `update-draft`, `delete-draft`
+- `mark-read`, `mark-unread`
+
+#### Calendar Tools (12)
+- `list-events`, `search-events`, `create-event`, `update-event`
+- `delete-event`, `accept-event`, `decline-event`, `tentative-event`
+- `list-calendars`, `create-calendar`, `update-calendar`, `delete-calendar`
+
+#### Contacts Tools (8)
+- `list-contacts`, `search-contacts`, `read-contact`, `create-contact`
+- `update-contact`, `delete-contact`, `list-contact-folders`, `create-contact-folder`
+
+#### Tasks Tools (7)
+- `list-tasks`, `create-task`, `update-task`, `delete-task`
+- `list-task-lists`, `create-task-list`, `delete-task-list`
+
+#### Teams Tools (25)
+- **Teams:** `list-teams`, `get-team-details`, `list-team-members`
+- **Channels:** `list-channels`, `get-channel-details`, `create-channel`, `update-channel`, `delete-channel`
+- **Messages:** `list-channel-messages`, `get-message-details`, `send-channel-message`, `reply-to-message`
+- **Chats:** `list-chats`, `get-chat-details`, `list-chat-messages`, `send-chat-message`, `create-chat`
+- **Presence:** `get-my-presence`, `get-user-presence`, `set-my-presence`, `get-multiple-users-presence`
+- **Meetings:** `list-online-meetings`, `create-online-meeting`, `get-online-meeting`, `update-online-meeting`, `delete-online-meeting`
+
+#### Folder & Rules Tools (6)
+- `list-folders`, `create-folder`, `delete-folder`
+- `list-rules`, `create-rule`, `delete-rule`
+
+### 3. Example Usage
+
+```
+"List my recent emails from today"
+"Create a meeting for tomorrow at 2 PM with the development team"
+"Send a message to the general channel in our project team"
+"Show my current presence status"
+"Create a task to review the quarterly report"
+```
+
+## 🧪 Test Mode
+
+For development and testing without API calls:
+
+```bash
+npm run test-mode
+```
+
+This uses mock data to simulate all Microsoft Graph API responses.
+
+## 📁 Project Structure
+
+```
+outlook-mcp/
+├── index.js                 # Main MCP server entry point
+├── config.js                # Configuration management
+├── auth/                    # Authentication & token management
+├── email/                   # Email functionality (17 tools)
+├── calendar/                # Calendar management (12 tools)
+├── contacts/                # Contacts management (8 tools)
+├── tasks/                   # Tasks/To-Do integration (7 tools)
+├── teams/                   # Teams integration (25 tools)
+├── folder/                  # Folder operations (3 tools)
+├── rules/                   # Rules management (3 tools)
+└── utils/                   # Graph API helpers & mock data
+```
+
+## 🔨 Development
+
+### Commands
+
+```bash
+npm start              # Start the MCP server
+npm run auth-server    # Start authentication server
+npm run test-mode      # Run in test mode with mock data
+npm run inspect        # Debug with MCP Inspector
+npm test              # Run tests
+```
+
+### Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests
+5. Submit a pull request
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**Authentication Errors:**
+- Check your Azure app configuration
+- Verify client ID and secret in `.env`
+- Ensure redirect URI is set correctly
+
+**Permission Errors:**
+- Verify all required permissions are granted in Azure
+- Check if admin consent is required for your organization
+
+**API Errors:**
+- Enable test mode to verify the server works: `npm run test-mode`
+- Check the console for detailed error messages
+
+### Debug Mode
+
+Enable verbose logging:
+
+```bash
+DEBUG=outlook-mcp npm start
+```
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) file for details.
+
+## 🙏 Support
+
+- **Issues:** [GitHub Issues](https://github.com/stefanskiasan/outlook-mcp/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/stefanskiasan/outlook-mcp/discussions)
+
+## 🎉 Acknowledgments
+
+- Microsoft Graph API team for the excellent API
+- Model Context Protocol team for the specification
+- Claude team for the amazing AI assistant
+
+---
+
+**Made with ❤️ by [Asan Stefanski](https://github.com/stefanskiasan)**
