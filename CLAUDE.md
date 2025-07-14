@@ -230,32 +230,32 @@ Each functional area (auth, email, calendar, contacts, tasks, teams, folder, rul
 - `delete-task-list` - Delete task lists
 
 ### Microsoft Teams Management
-- `list-teams` - List teams user is member of
-- `get-team-details` - Get detailed team information
-- `list-team-members` - List team members
-- `list-channels` - List channels in a team
-- `get-channel-details` - Get channel details
-- `create-channel` - Create new channels
-- `update-channel` - Update channel properties
-- `delete-channel` - Delete channels
-- `list-channel-messages` - List messages in channels
-- `get-message-details` - Get message details
-- `send-channel-message` - Send messages to channels
-- `reply-to-message` - Reply to channel messages
-- `list-chats` - List user's chats
-- `get-chat-details` - Get chat details
-- `list-chat-messages` - List messages in chats
-- `send-chat-message` - Send messages to chats
-- `create-chat` - Create new chats
-- `get-my-presence` - Get current user's presence
-- `get-user-presence` - Get specific user's presence
-- `set-my-presence` - Set user's presence status
-- `get-multiple-users-presence` - Get multiple users' presence
-- `list-online-meetings` - List online meetings
-- `create-online-meeting` - Create new online meetings
-- `get-online-meeting` - Get meeting details
-- `update-online-meeting` - Update meeting properties
-- `delete-online-meeting` - Delete online meetings
+- `list-teams` - List teams user is member of (Requires: Team.ReadBasic.All)
+- `get-team-details` - Get detailed team information (Requires: Team.ReadBasic.All)
+- `list-team-members` - List team members (Requires: TeamMember.Read.All)
+- `list-channels` - List channels in a team (Requires: Channel.ReadBasic.All)
+- `get-channel-details` - Get channel details (Requires: Channel.ReadBasic.All)
+- `create-channel` - Create new channels (Requires: Channel.Create)
+- `update-channel` - Update channel properties (Requires: Channel.ReadWrite.All)
+- `delete-channel` - Delete channels (Requires: Channel.Delete.All)
+- `list-channel-messages` - List messages in channels (Requires: ChannelMessage.Read.All)
+- `get-message-details` - Get message details (Requires: ChannelMessage.Read.All)
+- `send-channel-message` - Send messages to channels (Requires: ChannelMessage.Send)
+- `reply-to-message` - Reply to channel messages (Requires: ChannelMessage.Send)
+- `list-chats` - List user's chats (Requires: Chat.Read, Chat.ReadWrite)
+- `get-chat-details` - Get chat details (Requires: Chat.Read, Chat.ReadWrite)
+- `list-chat-messages` - List messages in chats (Requires: ChatMessage.Read)
+- `send-chat-message` - Send messages to chats (Requires: ChatMessage.Send)
+- `create-chat` - Create new chats (Requires: Chat.ReadWrite)
+- `get-my-presence` - Get current user's presence (Requires: Presence.Read)
+- `get-user-presence` - Get specific user's presence (Requires: Presence.Read.All)
+- `set-my-presence` - Set user's presence status (Requires: Presence.ReadWrite)
+- `get-multiple-users-presence` - Get multiple users' presence (Requires: Presence.Read.All)
+- `list-online-meetings` - List online meetings (Requires: OnlineMeetings.ReadWrite)
+- `create-online-meeting` - Create new online meetings (Requires: OnlineMeetings.ReadWrite)
+- `get-online-meeting` - Get meeting details (Requires: OnlineMeetings.ReadWrite)
+- `update-online-meeting` - Update meeting properties (Requires: OnlineMeetings.ReadWrite)
+- `delete-online-meeting` - Delete online meetings (Requires: OnlineMeetings.ReadWrite)
 
 ### Advanced Folder Management (Deep Hierarchy Support)
 - `list-folders` - List all folders with unlimited nesting levels and hierarchical display

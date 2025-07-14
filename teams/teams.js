@@ -84,10 +84,10 @@ async function handleGetTeamDetails(args) {
     
     if (!teamId) {
       return {
-        error: {
-          code: -32602,
-          message: "Team ID is required"
-        }
+        content: [{ 
+          type: "text", 
+          text: "Team ID is required"
+        }]
       };
     }
     
@@ -145,10 +145,10 @@ async function handleGetTeamDetails(args) {
   } catch (error) {
     console.error('Error in handleGetTeamDetails:', error);
     return {
-      error: {
-        code: -32603,
-        message: `Failed to get team details: ${error.message}`
-      }
+      content: [{ 
+        type: "text", 
+        text: `Error getting team details: ${error.message}`
+      }]
     };
   }
 }
@@ -164,10 +164,10 @@ async function handleListTeamMembers(args) {
     
     if (!teamId) {
       return {
-        error: {
-          code: -32602,
-          message: "Team ID is required"
-        }
+        content: [{ 
+          type: "text", 
+          text: "Team ID is required"
+        }]
       };
     }
     
@@ -219,10 +219,10 @@ async function handleListTeamMembers(args) {
   } catch (error) {
     console.error('Error in handleListTeamMembers:', error);
     return {
-      error: {
-        code: -32603,
-        message: `Failed to list team members: ${error.message}`
-      }
+      content: [{ 
+        type: "text", 
+        text: `Error listing team members: ${error.message}`
+      }]
     };
   }
 }
