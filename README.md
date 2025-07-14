@@ -19,7 +19,7 @@ A comprehensive Model Context Protocol (MCP) server that provides Claude with fu
   - Messages and chats
   - Online meetings
   - Presence status
-- **📁 Folder Management** (3 tools): Mail folder operations
+- **📁 Advanced Folder Management** (3 tools): Unlimited nested folder hierarchy with deep search
 - **⚙️ Rules Management** (3 tools): Email rules automation
 - **🔐 Authentication** (2 tools): OAuth 2.0 with Microsoft Graph API
 
@@ -166,8 +166,12 @@ The server provides 72+ tools across these categories:
 - **Presence:** `get-my-presence`, `get-user-presence`, `set-my-presence`, `get-multiple-users-presence`
 - **Meetings:** `list-online-meetings`, `create-online-meeting`, `get-online-meeting`, `update-online-meeting`, `delete-online-meeting`
 
-#### Folder & Rules Tools (6)
-- `list-folders`, `create-folder`, `delete-folder`
+#### Advanced Folder Management Tools (3)
+- `list-folders` - Display complete folder hierarchies with unlimited nesting levels
+- `create-folder` - Create folders at any depth (e.g., Projects/2024/Client-Work/Invoices)
+- `move-emails` - Move emails to deeply nested folders with automatic discovery
+
+#### Rules Management Tools (3)
 - `list-rules`, `create-rule`, `delete-rule`
 
 ### 3. Example Usage
@@ -178,6 +182,54 @@ The server provides 72+ tools across these categories:
 "Send a message to the general channel in our project team"
 "Show my current presence status"
 "Create a task to review the quarterly report"
+
+# Advanced Folder Management Examples:
+"Create a folder structure: Projects/2024/Client-Work/Invoices"
+"Show me all folders with their hierarchy and email counts"
+"Move these emails to the Photography subfolder in my Hobbies folder"
+"Create an Archive folder inside my existing Work/Completed folder"
+```
+
+## 🗂️ Advanced Folder Management
+
+### Unlimited Nested Folder Hierarchies
+
+Create and manage complex folder structures with unlimited nesting levels:
+
+```bash
+# Create deep folder structures
+create-folder: { "name": "2024", "parentFolder": "Projects" }
+create-folder: { "name": "Client-Work", "parentFolder": "2024" }
+create-folder: { "name": "Invoices", "parentFolder": "Client-Work" }
+
+# Result: Projects/2024/Client-Work/Invoices
+```
+
+### Intelligent Folder Search
+
+The system automatically finds folders at any depth:
+
+```bash
+# Works even with deeply nested folders
+create-folder: { "name": "Archive", "parentFolder": "Invoices" }
+move-emails: { "emailIds": "abc123", "targetFolder": "Archive" }
+```
+
+### Hierarchical Display
+
+View complete folder trees with proper indentation:
+
+```bash
+list-folders: { "includeChildren": true, "includeItemCounts": true }
+
+# Example output:
+# Projects - 45 items
+#   2024 - 32 items (5 unread)
+#     Client-Work - 28 items (3 unread)
+#       Invoices - 15 items
+#         Archive - 8 items
+#       Contracts - 13 items (3 unread)
+#   2023 - 13 items
 ```
 
 ## 🧪 Test Mode

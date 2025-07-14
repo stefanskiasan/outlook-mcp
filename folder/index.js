@@ -9,17 +9,17 @@ const handleMoveEmails = require('./move');
 const folderTools = [
   {
     name: "list-folders",
-    description: "Lists mail folders in your Outlook account",
+    description: "Lists mail folders with full hierarchy support - displays unlimited nesting levels with proper indentation. Shows complete folder structures from root to deepest subfolders.",
     inputSchema: {
       type: "object",
       properties: {
         includeItemCounts: {
           type: "boolean",
-          description: "Include counts of total and unread items"
+          description: "Include counts of total and unread items for each folder"
         },
         includeChildren: {
           type: "boolean",
-          description: "Include child folders in hierarchy"
+          description: "Display folders in hierarchical tree format with indentation (recommended for complex folder structures)"
         }
       },
       required: []
@@ -28,17 +28,17 @@ const folderTools = [
   },
   {
     name: "create-folder",
-    description: "Creates a new mail folder",
+    description: "Creates mail folders with unlimited nesting support. Build complex hierarchies like Projects/2024/Client-Work/Invoices. Automatically finds parent folders at any depth level.",
     inputSchema: {
       type: "object",
       properties: {
         name: {
           type: "string",
-          description: "Name of the folder to create"
+          description: "Name of the new folder to create"
         },
         parentFolder: {
           type: "string",
-          description: "Optional parent folder name (default is root)"
+          description: "Parent folder name - can be nested at any level (e.g., 'Photography' in 'Hobbies/Photography/Landscapes'). Leave empty to create at root level."
         }
       },
       required: ["name"]
@@ -47,7 +47,7 @@ const folderTools = [
   },
   {
     name: "move-emails",
-    description: "Moves emails from one folder to another",
+    description: "Moves emails between folders with deep hierarchy support. Can move to any nested folder automatically found by recursive search.",
     inputSchema: {
       type: "object",
       properties: {
@@ -57,11 +57,11 @@ const folderTools = [
         },
         targetFolder: {
           type: "string",
-          description: "Name of the folder to move emails to"
+          description: "Name of the destination folder - works with deeply nested folders (e.g., 'Invoices' in Projects/2024/Client-Work/Invoices)"
         },
         sourceFolder: {
           type: "string",
-          description: "Optional name of the source folder (default is inbox)"
+          description: "Optional source folder name - also supports nested folders (default is inbox)"
         }
       },
       required: ["emailIds", "targetFolder"]
