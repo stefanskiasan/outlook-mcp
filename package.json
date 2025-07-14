@@ -1,6 +1,6 @@
 {
   "name": "outlook-mcp",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "description": "Comprehensive MCP server for Claude to access Microsoft Outlook and Teams via Microsoft Graph API - including Email, Calendar, Contacts, Tasks, Teams, Chats, and Online Meetings",
   "main": "index.js",
   "bin": {
