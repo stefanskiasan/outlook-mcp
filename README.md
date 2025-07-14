@@ -6,11 +6,11 @@
 
 **Developed by Asan Stefanski**
 
-A comprehensive Model Context Protocol (MCP) server that provides Claude with full access to Microsoft Outlook and Microsoft Teams through the Microsoft Graph API. This server offers 72+ tools across 8 modules, making it one of the most complete Microsoft 365 integrations available for Claude.
+A comprehensive Model Context Protocol (MCP) server that provides Claude with full access to Microsoft Outlook and Microsoft Teams through the Microsoft Graph API. This server offers 74+ tools across 8 modules, making it one of the most complete Microsoft 365 integrations available for Claude.
 
 ## 🚀 Features
 
-- **📧 Email Management** (17 tools): Full email operations including send, reply, forward, attachments, categories, and drafts
+- **📧 Email Management** (19 tools): Full email operations including send, reply, forward, attachments, categories, drafts, and dedicated inbox-only tools
 - **📅 Calendar Management** (12 tools): Complete calendar and event management with CRUD operations
 - **👥 Contacts Management** (8 tools): Full contact lifecycle management with folders
 - **✅ Tasks Integration** (7 tools): Microsoft To-Do integration for task and list management
@@ -135,15 +135,17 @@ Use the "authenticate" tool in Claude to get an authentication URL
 
 ### 2. Available Tools
 
-The server provides 72+ tools across these categories:
+The server provides 74+ tools across these categories:
 
-#### Email Tools (17)
+#### Email Tools (19)
 - `list-emails`, `search-emails`, `read-email`, `send-email`
 - `reply-email`, `forward-email`, `delete-email`
 - `list-attachments`, `download-attachment`
 - `list-categories`, `create-category`, `delete-category`
 - `list-drafts`, `create-draft`, `update-draft`, `delete-draft`
 - `mark-read`, `mark-unread`
+- **`list-inbox-emails`** - Lists emails EXCLUSIVELY from inbox
+- **`search-inbox-emails`** - Advanced inbox-only search with date ranges, names, descriptions and attachments
 
 #### Calendar Tools (12)
 - `list-events`, `search-events`, `create-event`, `update-event`
@@ -182,6 +184,15 @@ The server provides 72+ tools across these categories:
 "Send a message to the general channel in our project team"
 "Show my current presence status"
 "Create a task to review the quarterly report"
+
+# Inbox-Only Email Examples:
+"Show me my latest 20 inbox emails"
+"Search for emails from John in my inbox only"
+"List unread emails in my inbox"
+"Find emails with attachments in my inbox"
+"Search inbox emails from last week (dateStart: '2024-07-07', dateEnd: '2024-07-14')"
+"Find inbox emails from Sarah between January 1-15 with attachments"
+"Show inbox emails mentioning 'project' from the last 30 days"
 
 # Advanced Folder Management Examples:
 "Create a folder structure: Projects/2024/Client-Work/Invoices"
