@@ -1,7 +1,7 @@
 {
   "name": "outlook-mcp",
-  "version": "1.0.0",
-  "description": "MCP server for Claude to access Outlook data via Microsoft Graph API",
+  "version": "2.1.0",
+  "description": "Comprehensive MCP server for Claude to access Microsoft Outlook and Teams via Microsoft Graph API - including Email, Calendar, Contacts, Tasks, Teams, Chats, and Online Meetings",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -13,18 +13,35 @@
   "keywords": [
     "claude",
     "outlook",
+    "teams",
     "mcp",
     "microsoft-graph",
-    "email"
+    "email",
+    "calendar",
+    "contacts",
+    "tasks",
+    "meetings"
   ],
-  "author": "",
+  "author": {
+    "name": "Asan Stefanski",
+    "email": "69960390+stefanskiasan@users.noreply.github.com",
+    "url": "https://github.com/stefanskiasan"
+  },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stefanskiasan/outlook-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/stefanskiasan/outlook-mcp/issues"
+  },
+  "homepage": "https://github.com/stefanskiasan/outlook-mcp#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.1.0",
     "dotenv": "^16.5.0"
   },
   "devDependencies": {
-    "@modelcontextprotocol/inspector": "^0.10.2",
+    "@modelcontextprotocol/inspector": "^0.16.1",
     "jest": "^29.7.0",
     "supertest": "^7.0.0"
   },
