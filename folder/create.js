@@ -2,7 +2,7 @@
  * Create folder functionality
  */
 const { callGraphAPI } = require('../utils/graph-api');
-const { ensureAuthenticated } = require('../auth');
+const { ensureAuthenticated, createAuthRequiredResponse } = require('../auth');
 const { getFolderIdByName } = require('../email/folder-utils');
 
 /**
@@ -27,6 +27,11 @@ async function handleCreateFolder(args) {
     // Get access token
     const accessToken = await ensureAuthenticated();
     
+    // Check if authentication is required
+    if (!accessToken) {
+      return await createAuthRequiredResponse('create-folder');
+    }
+    
     // Create folder with appropriate parent
     const result = await createMailFolder(accessToken, folderName, parentFolder);
     
@@ -37,15 +42,6 @@ async function handleCreateFolder(args) {
       }]
     };
   } catch (error) {
-    if (error.message === 'Authentication required') {
-      return {
-        content: [{ 
-          type: "text", 
-          text: "Authentication required. Please use the 'authenticate' tool first."
-        }]
-      };
-    }
-    
     return {
       content: [{ 
         type: "text", 
