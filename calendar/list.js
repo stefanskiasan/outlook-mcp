@@ -3,7 +3,7 @@
  */
 const config = require('../config');
 const { callGraphAPI } = require('../utils/graph-api');
-const { ensureAuthenticated } = require('../auth');
+const { ensureAuthenticated, createAuthRequiredResponse } = require('../auth');
 
 /**
  * List events handler
@@ -16,6 +16,11 @@ async function handleListEvents(args) {
   try {
     // Get access token
     const accessToken = await ensureAuthenticated();
+    
+    // Check if authentication is required
+    if (!accessToken) {
+      return await createAuthRequiredResponse('list-events');
+    }
     
     // Build API endpoint
     let endpoint = 'me/events';
@@ -56,15 +61,6 @@ async function handleListEvents(args) {
       }]
     };
   } catch (error) {
-    if (error.message === 'Authentication required') {
-      return {
-        content: [{ 
-          type: "text", 
-          text: "Authentication required. Please use the 'authenticate' tool first."
-        }]
-      };
-    }
-    
     return {
       content: [{ 
         type: "text", 
