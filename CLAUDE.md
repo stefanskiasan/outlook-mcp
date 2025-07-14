@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a comprehensive Model Context Protocol (MCP) server that provides Claude with full access to Microsoft Outlook and Microsoft Teams through the Microsoft Graph API. The server is structured as a modular Node.js application that handles authentication, email, calendar, contacts, tasks, teams, folders, and rules operations.
 
-The server provides 72+ tools across 8 modules, making it one of the most comprehensive Microsoft 365 integrations available for Claude.
+The server provides 75+ tools across 8 modules, making it one of the most comprehensive Microsoft 365 integrations available for Claude.
 
 ## Publishing Information
 
@@ -191,6 +191,9 @@ Each functional area (auth, email, calendar, contacts, tasks, teams, folder, rul
 - `create-draft` - Create new email drafts
 - `update-draft` - Update existing drafts
 - `send-draft` - Send draft emails
+- `list-inbox-emails` - List emails EXCLUSIVELY from inbox (never other folders)
+- `search-inbox-emails` - Search emails EXCLUSIVELY within inbox with multiple criteria
+- `bulk-delete-emails` - Delete multiple emails at once with JSON batching support
 
 ### Calendar Management
 - `list-events` - List calendar events

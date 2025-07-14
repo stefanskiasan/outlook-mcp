@@ -6,11 +6,11 @@
 
 **Developed by Asan Stefanski**
 
-A comprehensive Model Context Protocol (MCP) server that provides Claude with full access to Microsoft Outlook and Microsoft Teams through the Microsoft Graph API. This server offers 74+ tools across 8 modules, making it one of the most complete Microsoft 365 integrations available for Claude.
+A comprehensive Model Context Protocol (MCP) server that provides Claude with full access to Microsoft Outlook and Microsoft Teams through the Microsoft Graph API. This server offers 75+ tools across 8 modules, making it one of the most complete Microsoft 365 integrations available for Claude.
 
 ## 🚀 Features
 
-- **📧 Email Management** (19 tools): Full email operations including send, reply, forward, attachments, categories, drafts, and dedicated inbox-only tools
+- **📧 Email Management** (20 tools): Full email operations including send, reply, forward, attachments, categories, drafts, dedicated inbox-only tools, and bulk operations
 - **📅 Calendar Management** (12 tools): Complete calendar and event management with CRUD operations
 - **👥 Contacts Management** (8 tools): Full contact lifecycle management with folders
 - **✅ Tasks Integration** (7 tools): Microsoft To-Do integration for task and list management
@@ -135,9 +135,9 @@ Use the "authenticate" tool in Claude to get an authentication URL
 
 ### 2. Available Tools
 
-The server provides 74+ tools across these categories:
+The server provides 75+ tools across these categories:
 
-#### Email Tools (19)
+#### Email Tools (20)
 - `list-emails`, `search-emails`, `read-email`, `send-email`
 - `reply-email`, `forward-email`, `delete-email`
 - `list-attachments`, `download-attachment`
@@ -146,6 +146,7 @@ The server provides 74+ tools across these categories:
 - `mark-read`, `mark-unread`
 - **`list-inbox-emails`** - Lists emails EXCLUSIVELY from inbox
 - **`search-inbox-emails`** - Advanced inbox-only search with date ranges, names, descriptions and attachments
+- **`bulk-delete-emails`** - Delete multiple emails at once with batch operations
 
 #### Calendar Tools (12)
 - `list-events`, `search-events`, `create-event`, `update-event`
@@ -193,6 +194,11 @@ The server provides 74+ tools across these categories:
 "Search inbox emails from last week (dateStart: '2024-07-07', dateEnd: '2024-07-14')"
 "Find inbox emails from Sarah between January 1-15 with attachments"
 "Show inbox emails mentioning 'project' from the last 30 days"
+
+# Bulk Operations Examples:
+"Delete multiple emails: bulk-delete-emails with emailIds: 'id1,id2,id3'"
+"Move multiple emails to Archive folder using move-emails"
+"Bulk delete old emails with JSON batching for better performance"
 
 # Advanced Folder Management Examples:
 "Create a folder structure: Projects/2024/Client-Work/Invoices"
@@ -260,7 +266,7 @@ outlook-mcp/
 ├── index.js                 # Main MCP server entry point
 ├── config.js                # Configuration management
 ├── auth/                    # Authentication & token management
-├── email/                   # Email functionality (17 tools)
+├── email/                   # Email functionality (20 tools)
 ├── calendar/                # Calendar management (12 tools)
 ├── contacts/                # Contacts management (8 tools)
 ├── tasks/                   # Tasks/To-Do integration (7 tools)

@@ -11,6 +11,7 @@ const { handleReplyToEmail, handleForwardEmail } = require('./reply');
 const { handleSetEmailCategories, handleSetEmailImportance, handleFlagEmail } = require('./categories');
 const { handleListDrafts, handleCreateDraft, handleUpdateDraft, handleSendDraft } = require('./drafts');
 const { handleListInboxEmails, handleSearchInboxEmails } = require('./inbox');
+const handleBulkDeleteEmails = require('./bulk-delete');
 
 // Email tool definitions
 const emailTools = [
@@ -483,6 +484,29 @@ const emailTools = [
       required: []
     },
     handler: handleSearchInboxEmails
+  },
+  {
+    name: "bulk-delete-emails",
+    description: "Deletes multiple emails at once. Supports batch operations for better performance. Use with caution - this action cannot be undone!",
+    inputSchema: {
+      type: "object",
+      properties: {
+        emailIds: {
+          type: "string",
+          description: "Comma-separated list of email IDs to delete (e.g., 'id1,id2,id3')"
+        },
+        useBatch: {
+          type: "boolean",
+          description: "Use JSON batching for better performance (default: true)"
+        },
+        maxEmails: {
+          type: "number",
+          description: "Maximum number of emails to delete at once (default: 20, max: 20)"
+        }
+      },
+      required: ["emailIds"]
+    },
+    handler: handleBulkDeleteEmails
   }
 ];
 
@@ -505,5 +529,6 @@ module.exports = {
   handleUpdateDraft,
   handleSendDraft,
   handleListInboxEmails,
-  handleSearchInboxEmails
+  handleSearchInboxEmails,
+  handleBulkDeleteEmails
 };
