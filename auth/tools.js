@@ -38,6 +38,16 @@ async function handleAuthenticate(args) {
     };
   }
   
+  // Check if client ID is configured
+  if (!config.AUTH_CONFIG.clientId) {
+    return {
+      content: [{
+        type: "text",
+        text: `❌ Client ID not configured. Please set MS_CLIENT_ID or OUTLOOK_CLIENT_ID environment variable.\n\nCurrent config:\n- MS_CLIENT_ID: ${process.env.MS_CLIENT_ID ? '[SET]' : '[NOT SET]'}\n- OUTLOOK_CLIENT_ID: ${process.env.OUTLOOK_CLIENT_ID ? '[SET]' : '[NOT SET]'}`
+      }]
+    };
+  }
+
   // For real authentication, start the auth server, open browser, and wait for completion
   const authUrl = `${config.AUTH_CONFIG.authServerUrl}/auth?client_id=${config.AUTH_CONFIG.clientId}`;
   
@@ -68,7 +78,7 @@ async function handleAuthenticate(args) {
     
     // Wait for server to start (check if port is listening)
     let serverReady = false;
-    const maxStartTime = 3000; // 3 seconds max to start
+    const maxStartTime = 5000; // 5 seconds max to start
     let startTime = 0;
     
     while (!serverReady && startTime < maxStartTime) {
@@ -77,7 +87,7 @@ async function handleAuthenticate(args) {
         const req = http.request({
           hostname: 'localhost',
           port: 3333,
-          path: '/token-status',
+          path: '/',
           method: 'GET',
           timeout: 1000
         }, (res) => {
@@ -91,18 +101,18 @@ async function handleAuthenticate(args) {
         req.end();
         
         if (!serverReady) {
-          await new Promise(resolve => setTimeout(resolve, 200));
-          startTime += 200;
+          await new Promise(resolve => setTimeout(resolve, 300));
+          startTime += 300;
         }
       } catch (e) {
-        await new Promise(resolve => setTimeout(resolve, 200));
-        startTime += 200;
+        await new Promise(resolve => setTimeout(resolve, 300));
+        startTime += 300;
       }
     }
     
     if (!serverReady) {
       authServer.kill('SIGTERM');
-      throw new Error('Authentication server failed to start within 3 seconds');
+      throw new Error('Authentication server failed to start within 5 seconds');
     }
     
     console.error('Authentication server is ready');
@@ -120,11 +130,13 @@ async function handleAuthenticate(args) {
     
     // Wait for authentication to complete (check for token file)
     const tokenPath = config.AUTH_CONFIG.tokenStorePath;
-    const maxWaitTime = 10000; // 10 seconds
+    const maxWaitTime = 15000; // 15 seconds
     const checkInterval = 500; // Check every 500ms
     let waitTime = 0;
     
     console.error('Waiting for authentication to complete...');
+    console.error(`Token path: ${tokenPath}`);
+    console.error(`Client ID: ${config.AUTH_CONFIG.clientId}`);
     
     while (waitTime < maxWaitTime) {
       // Check if token file exists and has valid content
@@ -146,6 +158,7 @@ async function handleAuthenticate(args) {
           }
         } catch (e) {
           // Token file exists but is not valid yet, continue waiting
+          console.error('Token file parsing error:', e.message);
         }
       }
       
@@ -159,7 +172,7 @@ async function handleAuthenticate(args) {
     return {
       content: [{
         type: "text",
-        text: `⏰ Authentication timeout after 10 seconds.\n\nThe browser should have opened automatically with this URL:\n${authUrl}\n\nIf the browser didn't open or you need more time, please visit the URL manually and complete the authentication process.`
+        text: `⏰ Authentication timeout after 15 seconds.\n\nThe browser should have opened automatically with this URL:\n${authUrl}\n\nIf the browser didn't open or you need more time, please visit the URL manually and complete the authentication process.\n\nDebug info:\n- Client ID: ${config.AUTH_CONFIG.clientId}\n- Token path: ${tokenPath}`
       }]
     };
     

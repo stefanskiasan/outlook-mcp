@@ -102,6 +102,8 @@ MS_CLIENT_SECRET=your-client-secret-here
 USE_TEST_MODE=false
 ```
 
+**Note:** The system supports both `MS_CLIENT_ID`/`MS_CLIENT_SECRET` and `OUTLOOK_CLIENT_ID`/`OUTLOOK_CLIENT_SECRET` environment variables for backwards compatibility.
+
 ### 5. Claude Desktop Configuration
 
 Add to your Claude Desktop config file:

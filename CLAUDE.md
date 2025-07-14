@@ -149,8 +149,8 @@ Each functional area (auth, email, calendar, contacts, tasks, teams, folder, rul
 ## Configuration Requirements
 
 ### Environment Variables
-- `OUTLOOK_CLIENT_ID` - Azure app client ID
-- `OUTLOOK_CLIENT_SECRET` - Azure app client secret
+- `MS_CLIENT_ID` (or `OUTLOOK_CLIENT_ID`) - Azure app client ID
+- `MS_CLIENT_SECRET` (or `OUTLOOK_CLIENT_SECRET`) - Azure app client secret
 - `USE_TEST_MODE` - Enable test mode (true/false)
 
 ### Azure App Registration
