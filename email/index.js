@@ -12,6 +12,7 @@ const { handleSetEmailCategories, handleSetEmailImportance, handleFlagEmail } = 
 const { handleListDrafts, handleCreateDraft, handleUpdateDraft, handleSendDraft } = require('./drafts');
 const { handleListInboxEmails, handleSearchInboxEmails } = require('./inbox');
 const handleBulkDeleteEmails = require('./bulk-delete');
+const handleBulkReadEmails = require('./bulk-read');
 
 // Email tool definitions
 const emailTools = [
@@ -507,6 +508,29 @@ const emailTools = [
       required: ["emailIds"]
     },
     handler: handleBulkDeleteEmails
+  },
+  {
+    name: "bulk-read-emails",
+    description: "Reads multiple emails at once using efficient batch processing. Perfect for processing large amounts of email data quickly.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        emailIds: {
+          type: "string",
+          description: "Comma-separated list of email IDs to read (e.g., 'id1,id2,id3')"
+        },
+        useBatch: {
+          type: "boolean",
+          description: "Use JSON batching for better performance (default: true)"
+        },
+        maxEmails: {
+          type: "number",
+          description: "Maximum number of emails to read at once (default: 20, max: 20)"
+        }
+      },
+      required: ["emailIds"]
+    },
+    handler: handleBulkReadEmails
   }
 ];
 
@@ -530,5 +554,6 @@ module.exports = {
   handleSendDraft,
   handleListInboxEmails,
   handleSearchInboxEmails,
-  handleBulkDeleteEmails
+  handleBulkDeleteEmails,
+  handleBulkReadEmails
 };

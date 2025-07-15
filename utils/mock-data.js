@@ -675,7 +675,80 @@ function simulateGraphAPIResponse(method, path, data, queryParams) {
       };
     }
   } else if (method === 'POST') {
-    if (path.includes('sendMail')) {
+    if (path.includes('$batch')) {
+      // Simulate batch API response
+      const responses = [];
+      
+      if (data && data.requests && Array.isArray(data.requests)) {
+        for (const request of data.requests) {
+          let response;
+          
+          if (request.method === 'GET' && request.url.includes('/me/messages/')) {
+            // Simulate successful email read
+            const emailId = request.url.split('/').pop();
+            response = {
+              id: request.id,
+              status: 200,
+              headers: { 'Content-Type': 'application/json' },
+              body: {
+                id: emailId,
+                subject: `Mock Email ${emailId}`,
+                from: {
+                  emailAddress: {
+                    name: "Mock Sender",
+                    address: "sender@example.com"
+                  }
+                },
+                toRecipients: [{
+                  emailAddress: {
+                    name: "You",
+                    address: "you@example.com"
+                  }
+                }],
+                ccRecipients: [],
+                bccRecipients: [],
+                receivedDateTime: new Date().toISOString(),
+                bodyPreview: `This is a mock email preview for ${emailId}...`,
+                body: {
+                  contentType: "text",
+                  content: `This is the full content of mock email ${emailId}. This is simulated content for testing the bulk read functionality.`
+                },
+                hasAttachments: false,
+                importance: "normal",
+                isRead: false,
+                internetMessageHeaders: []
+              }
+            };
+          } else if (request.method === 'DELETE' && request.url.includes('/me/messages/')) {
+            // Simulate successful email deletion
+            response = {
+              id: request.id,
+              status: 204,
+              headers: {}
+            };
+          } else {
+            // Simulate error for unknown requests
+            response = {
+              id: request.id,
+              status: 404,
+              headers: { 'Content-Type': 'application/json' },
+              body: {
+                error: {
+                  code: 'NotFound',
+                  message: 'The requested resource was not found.'
+                }
+              }
+            };
+          }
+          
+          responses.push(response);
+        }
+      }
+      
+      return {
+        responses: responses
+      };
+    } else if (path.includes('sendMail')) {
       // Simulate a successful email send
       return {};
     } else if (path.includes('contacts')) {
